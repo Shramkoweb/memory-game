@@ -27,7 +27,7 @@ const hideAllCards = () => {
     });
 };
 
-const getFlexOrder = (cardsCount) => String(Math.floor(Math.random() * cardsCount));
+const getOrder = (cardsCount) => String(Math.floor(Math.random() * cardsCount));
 
 const temporaryShowAllCards = () => {
     state.isBoardBlocked = true;
@@ -88,7 +88,7 @@ const checkIsCardsMatch = () => {
     blockBoard();
 };
 
-contentElement.addEventListener('click', function ({target}) {
+const handleCardClick = ({target}) => {
     // get parent if click on cell__symbol
     const targetCell = target.closest('.cell');
     if (state.firstCard && state.secondCard) {
@@ -96,14 +96,16 @@ contentElement.addEventListener('click', function ({target}) {
     }
 
     flipCard(targetCell);
-});
+};
 
 const init = () => {
     cellElements.forEach(item => {
-        item.style.order = getFlexOrder(state.cardsLeft);
+        item.style.order = getOrder(state.cardsLeft);
     });
 
     temporaryShowAllCards();
+
+    contentElement.addEventListener('click', handleCardClick);
 };
 
 window.requestAnimationFrame(init);
