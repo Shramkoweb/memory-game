@@ -43,7 +43,8 @@ const flipCard = (card) => {
 
     if (
         state.isBoardBlocked ||
-        isClickOnEqualCard
+        isClickOnEqualCard ||
+        !card
     ) {
         return;
     }
@@ -57,15 +58,21 @@ const flipCard = (card) => {
     }
 };
 
+const isGameWin = () => {
+    console.log(state);
+    if (state.cardsLeft <= 0) {
+        resultElement.textContent = 'You win!';
+    }
+};
+
 const hideMatchCards = () => {
+    state.cardsLeft -= CARDS_COUNT_PER_FLIP;
+
     setTimeout(() => {
         state.firstCard.classList.add('closed');
         state.secondCard.classList.add('closed');
-        state.cardsLeft -= CARDS_COUNT_PER_FLIP;
-        if (state.cardsLeft <= 0) {
-            resultElement.textContent = 'You win!';
-        }
         resetBoardState();
+        isGameWin();
     }, HIDE_TIMEOUT);
 };
 
