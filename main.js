@@ -1,17 +1,20 @@
 const HIDE_TIMEOUT = 500;
 const RESET_TIMEOUT = 700;
 const SHOW_ALL_CARDS_TIMEOUT = 1000;
+const CARDS_COUNT_PER_FLIP = 2;
 
 const contentElement = document.querySelector('.content');
 const cellElements = contentElement.querySelectorAll('.cell');
+const resultElement = document.querySelector('.result');
 
 const state = {
     isBoardBlocked: false,
     firstCard: null,
     secondCard: null,
+    cardsLeft: cellElements.length,
 };
 
-const resetState = () => {
+const resetBoardState = () => {
     state.secondCard = null;
     state.firstCard = null;
     state.isBoardBlocked = false;
@@ -23,6 +26,8 @@ const hideAllCards = () => {
         card.classList.remove('opened');
     })
 };
+
+const getFlexOrder = (cardsCount) => String(Math.floor(Math.random() * cardsCount));
 
 const temporaryShowAllCards = () => {
     state.isBoardBlocked = true;
@@ -56,7 +61,11 @@ const hideMatchCards = () => {
     setTimeout(() => {
         state.firstCard.classList.add('closed');
         state.secondCard.classList.add('closed');
-        resetState();
+        state.cardsLeft -= CARDS_COUNT_PER_FLIP;
+        if (state.cardsLeft <= 0) {
+            resultElement.textContent = 'You win!'
+        }
+        resetBoardState();
     }, HIDE_TIMEOUT);
 };
 
@@ -67,7 +76,7 @@ const blockBoard = () => {
         state.firstCard.classList.remove('opened', 'flip');
         state.secondCard.classList.remove('opened', 'flip');
 
-        resetState();
+        resetBoardState();
     }, RESET_TIMEOUT);
 }
 
@@ -86,13 +95,15 @@ contentElement.addEventListener('click', function ({ target }) {
         return;
     }
 
+    console.log(state)
     flipCard(targetCell);
 });
 
 const init = () => {
     cellElements.forEach(item => {
-        item.style.order = String(Math.floor(Math.random() * cellElements.length));
+        item.style.order = getFlexOrder(state.cardsLeft);
     });
+
     temporaryShowAllCards();
 };
 
